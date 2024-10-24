@@ -1,5 +1,35 @@
 {% extends 'core/base.html' %}
 
 {% block main %}
-   <h2>Hola Mundo</h2>
+<div class="container mt-5">
+   <h2 class="text-center mb-4">Nuestros Productos</h2>
+   <div class="row">
+       {% for producto in productos %}
+       <div class="col-md-4 mb-4">
+           <div class="card h-100">
+               <!-- Mostrar imagen del producto -->
+               {% if producto.imagen %}
+               <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}">
+               {% else %}
+               <img src="https://via.placeholder.com/300" class="card-img-top" alt="Imagen no disponible">
+               {% endif %}
+               
+               <!-- Detalles del producto -->
+               <div class="card-body">
+                   <h5 class="card-title">{{ producto.nombre }}</h5>
+                   <p class="card-text">{{ producto.descripcion|truncatewords:20 }}</p>
+                   <p class="card-text"><strong>Precio:</strong> ${{ producto.precio }}</p>
+               </div>
+
+               <!-- Botón para ver más detalles -->
+               <div class="card-footer text-center">
+                   <a href="#" class="btn btn-primary">Agregar</a>
+               </div>
+           </div>
+       </div>
+       {% empty %}
+       <p class="text-center">No hay productos disponibles en este momento.</p>
+       {% endfor %}
+   </div>
+</div>
 {% endblock %} 
