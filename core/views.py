@@ -27,9 +27,13 @@ def productos(request):
 
 
 def carrito(request):
-    titulo = "Inicio"
+    carrito = Carro.objects.filter(usuario = request.user).last()
+    productos = carrito.productos.all()
+    if productos is None:
+        productos = []
     data = {
-        "titulo": titulo
+        "carro": carrito,
+        'productos': productos
     }
     return render(request,'core/carrito.html', data)
 
@@ -115,3 +119,22 @@ def register(request):
 def cerrar_sesion(request):
     logout(request)
     return redirect('/')
+
+def agregar_producto(request, id):
+    producto = Producto.objects.get(id=id)
+    if not producto == None:
+        carrito = Carro.objects.filter(usuario = request.user).last()
+
+        if not carrito or carrito.estado == 'LISTO':
+            nuevo_carrito = Carro(usuario = request.user, total = 0, estado = 'PENDIENTE')
+            nuevo_carrito.save()
+            carrito = nuevo_carrito
+
+        if carrito:
+            carrito.productos.add(producto)
+            carrito.total += producto.precio
+            carrito.save()
+            print(carrito)
+        print(producto.nombre)
+
+        return redirect('/productos/')
